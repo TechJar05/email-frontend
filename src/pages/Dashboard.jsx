@@ -1,13 +1,15 @@
 // src/pages/Dashboard.jsx
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { clientsAPI, emailsAPI } from "../services/api";
+
+import TopBar from "../components/layout/TopBar";
 import StatsCards from "../components/StatsCards";
 import ClientsTable from "../components/ClientsTable";
 import UploadExcel from "../components/UploadExcel";
 
 const Dashboard = () => {
   const [stats, setStats] = useState(null);
-  const [clients, setClients] = useState([]);
+  const [clients, setClients] = useState([]); // always array
   const [loading, setLoading] = useState(true);
   const [sendingEmails, setSendingEmails] = useState(false);
 
@@ -18,12 +20,20 @@ const Dashboard = () => {
   const loadData = async () => {
     try {
       setLoading(true);
+
       const [statsRes, clientsRes] = await Promise.all([
         clientsAPI.getStats(),
         clientsAPI.getAll(),
       ]);
+
       setStats(statsRes.data);
-      setClients(clientsRes.data);
+
+      // ✅ ensure it's an array (protects UI even if API returns object)
+      const rows = Array.isArray(clientsRes.data)
+        ? clientsRes.data
+        : clientsRes.data?.clients || [];
+
+      setClients(rows);
     } catch (error) {
       console.error("Error loading data:", error);
       alert("Failed to load data");
@@ -36,8 +46,9 @@ const Dashboard = () => {
     try {
       const response = await clientsAPI.uploadExcel(file);
       alert(response.data.message);
-      loadData();
-    } catch {
+      await loadData();
+    } catch (e) {
+      console.error(e);
       alert("Failed to upload Excel file");
     }
   };
@@ -49,8 +60,9 @@ const Dashboard = () => {
       setSendingEmails(true);
       const response = await emailsAPI.sendAll();
       alert(response.data.message);
-      loadData();
-    } catch {
+      await loadData();
+    } catch (e) {
+      console.error(e);
       alert("Failed to send emails");
     } finally {
       setSendingEmails(false);
@@ -61,8 +73,9 @@ const Dashboard = () => {
     if (!confirm("Delete this client?")) return;
     try {
       await clientsAPI.delete(clientId);
-      loadData();
-    } catch {
+      await loadData();
+    } catch (e) {
+      console.error(e);
       alert("Failed to delete client");
     }
   };
@@ -72,87 +85,71 @@ const Dashboard = () => {
     try {
       await clientsAPI.deleteAll();
       alert("All clients deleted");
-      loadData();
-    } catch {
+      await loadData();
+    } catch (e) {
+      console.error(e);
       alert("Failed to delete clients");
     }
   };
 
   const allSent = stats && stats.total_clients === stats.emails_sent;
 
-  /* ---------- Loader ---------- */
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#073246] flex items-center justify-center">
-        <div className="rounded-3xl bg-white/5 border border-white/15 p-8 text-center">
-          <div className="w-10 h-10 rounded-full border-2 border-white/30 border-t-white animate-spin mx-auto mb-4" />
-          <p className="text-white font-semibold">Loading Dashboard…</p>
-          <p className="text-white/70 text-sm mt-1">
-            Fetching campaign data
-          </p>
+      <div className="min-h-screen bg-[#073246]">
+        <TopBar />
+        <div className="min-h-[70vh] flex items-center justify-center px-6">
+          <div className="bg-white rounded-2xl shadow-lg p-8 text-center border border-slate-200">
+            <div className="w-8 h-8 border-2 border-[#1d4457]/30 border-t-[#1d4457] rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-[#1d4457] font-semibold">Loading Dashboard…</p>
+            <p className="text-slate-500 text-sm mt-1">Fetching campaign data</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#073246] text-white">
-      <div className="max-w-[2900px] mx-auto px-8 md:px-14 py-12 md:py-20">
-        {/* Header */}
-        <div className="mb-10">
-          <div className="rounded-3xl bg-white/5 border border-white/15 p-6 md:p-8">
-            <h1 className="text-2xl md:text-3xl font-semibold text-white">
-              Aptara Email Campaign Dashboard
-            </h1>
-            <p className="text-white/70 text-sm mt-2 max-w-2xl">
-              Upload client lists, track engagement, and send pending emails —
-              all aligned with the Aptara demo experience.
-            </p>
+    <div className="min-h-screen bg-slate-100">
+      <TopBar />
 
-            <div className="flex flex-wrap gap-3 mt-5 text-xs">
-              <div className="rounded-2xl bg-white/5 border border-white/15 px-4 py-2">
-                <span className="text-white font-semibold">
-                  {stats.total_clients}
-                </span>{" "}
-                total clients
-              </div>
-              <div className="rounded-2xl bg-white/5 border border-white/15 px-4 py-2">
-                <span className="text-white font-semibold">
-                  {stats.emails_sent}
-                </span>{" "}
-                emails sent
-              </div>
-              <div className="rounded-2xl bg-white/5 border border-white/15 px-4 py-2">
-                <span className="text-white font-semibold">
-                  {stats.total_clients - stats.emails_sent}
-                </span>{" "}
-                pending
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* 🔷 Blue Header Band */}
+      <section className="bg-[#073246] text-white">
+        <div className="max-w-[2900px] mx-auto px-6 md:px-10 py-10">
+          <h1 className="text-2xl md:text-3xl font-semibold">
+            Aptara Email Campaign Dashboard
+          </h1>
+          <p className="text-white/80 text-sm mt-2 max-w-2xl">
+            Upload client lists, track engagement, and send pending emails.
+          </p>
 
-        {/* Stats */}
-        <div className="mb-10">
-          <StatsCards stats={stats} />
+         
         </div>
+      </section>
+
+      {/* ⚪ White Working Area */}
+      <main className="max-w-[2900px] mx-auto px-6 md:px-10 py-10 space-y-10">
+        {/* Stats (already white cards inside) */}
+        <StatsCards stats={stats} />
 
         {/* Upload + Send */}
-        <div className="grid md:grid-cols-2 gap-8 mb-10">
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* UploadExcel is already a white card */}
           <UploadExcel onUpload={handleExcelUpload} />
 
-          <div className="rounded-2xl bg-white/5 border border-white/15 p-6">
-            <h3 className="text-white font-semibold text-lg mb-1">
+          {/* Send Emails card */}
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h3 className="text-[#073246] font-semibold text-lg mb-1">
               📧 Send Emails
             </h3>
-            <p className="text-white/70 text-sm mb-5">
+            <p className="text-slate-600 text-sm mb-5">
               Send emails only to clients who haven’t received one yet.
             </p>
 
             <button
               onClick={handleSendEmails}
               disabled={sendingEmails || allSent}
-              className="w-full px-5 py-3 rounded-full bg-white text-[#073246] font-semibold hover:bg-[#f5f5f5] transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-5 py-3 rounded-full bg-[#1d4457] text-white font-semibold hover:bg-[#163647] transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {sendingEmails
                 ? "Sending…"
@@ -163,18 +160,18 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Clients Table */}
+        {/* Clients Table (already white card inside) */}
         <ClientsTable
           clients={clients}
           onDelete={handleDeleteClient}
           onDeleteAll={handleDeleteAll}
         />
+      </main>
 
-        {/* Footer */}
-        <div className="text-center text-xs text-white/50 mt-10">
-          Aptara Demo Microsite • Email Campaign Module
-        </div>
-      </div>
+      {/* Footer */}
+      <footer className="bg-[#073246] text-white/60 text-center text-xs py-6">
+        Aptara Demo Microsite • Email Campaign Module
+      </footer>
     </div>
   );
 };
