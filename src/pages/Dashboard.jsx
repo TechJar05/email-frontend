@@ -110,7 +110,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-white">
       <TopBar />
 
       {/* 🔷 Blue Header Band */}
@@ -119,7 +119,7 @@ const Dashboard = () => {
           <h1 className="text-2xl md:text-3xl font-semibold">
             Aptara Email Campaign Dashboard
           </h1>
-          <p className="text-white/80 text-sm mt-2 max-w-2xl">
+          <p className="text-white text-sm mt-2 max-w-2xl">
             Upload client lists, track engagement, and send pending emails.
           </p>
 

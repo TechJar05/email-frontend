@@ -6,11 +6,11 @@ const ClientsTable = ({ clients = [], onDelete, onDeleteAll }) => {
   const formatDate = (d) => (d ? new Date(d).toLocaleString() : "-");
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <div className="bg-white/50 rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       {/* Header */}
       <div className="px-6 py-4 flex items-center justify-between border-b border-slate-200">
         <div>
-          <h3 className="text-[#073246] font-semibold">
+          <h3 className="text-[#073246] font-bold">
             📋 Clients ({safeClients.length})
           </h3>
           <p className="text-slate-500 text-xs mt-1">
