@@ -50,7 +50,7 @@ const ClientsTable = ({ clients = [], onDelete, onDeleteAll }) => {
                 <th className="py-3 px-4 text-center font-semibold">Sent</th>
                 <th className="py-3 px-4 text-center font-semibold">Clicked</th>
                 <th className="py-3 px-4 text-center font-semibold">Clicks</th>
-                <th className="py-3 px-4 text-left font-semibold">Last Click</th>
+                {/* <th className="py-3 px-4 text-left font-semibold">Last Click</th> */}
                 <th className="py-3 px-4 text-center font-semibold">Action</th>
               </tr>
             </thead>
@@ -106,9 +106,9 @@ const ClientsTable = ({ clients = [], onDelete, onDeleteAll }) => {
                       {Number.isFinite(c.click_count) ? c.click_count : 0}
                     </td>
 
-                    <td className="py-3 px-4 text-slate-500">
-                      {formatDate(c.link_clicked_at)}
-                    </td>
+                    {/* <td className="py-3 px-4 text-slate-500">
+                      {formatDate(c.created_at)}
+                    </td> */}
 
                     <td className="py-3 px-4 text-center">
                       <button
