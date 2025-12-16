@@ -1,16 +1,19 @@
 // src/components/layout/TopBar.jsx
-import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function TopBar() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("dashboard");
 
   const scrollToTop = () => {
+    setActiveTab("dashboard");
     navigate("/");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const scrollToMiddle = () => {
+    setActiveTab("campaigns");
     navigate("/");
     const middle =
       document.documentElement.scrollHeight / 2 -
@@ -20,12 +23,20 @@ export default function TopBar() {
   };
 
   const scrollToBottom = () => {
+    setActiveTab("clients");
     navigate("/");
     window.scrollTo({
       top: document.documentElement.scrollHeight,
       behavior: "smooth",
     });
   };
+
+  const navClass = (tab) =>
+    `inline-flex items-center py-3 border-b-2 transition ${
+      activeTab === tab
+        ? "border-[#1d4457] text-[#073246]"
+        : "border-transparent text-[#1d4457]/70 hover:text-[#073246]"
+    }`;
 
   return (
     <header className="sticky top-0 z-50 w-full">
@@ -44,7 +55,7 @@ export default function TopBar() {
           </div>
 
           <span className="text-[11px] md:text-xs px-3 py-1.5 rounded-full bg-white/10 border border-white/20 text-white/80 backdrop-blur">
-            Powered by AI
+            Powered by Aptara
           </span>
         </div>
       </div>
@@ -52,28 +63,16 @@ export default function TopBar() {
       {/* White Nav Bar */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[2900px] mx-auto px-6 md:px-10">
-          <nav className="flex items-center gap-6 md:gap-8 text-sm font-semibold text-[#1d4457]">
-            {/* Dashboard */}
-            <button
-              onClick={scrollToTop}
-              className="inline-flex items-center py-3 border-b-2 border-transparent hover:text-[#073246] transition"
-            >
+          <nav className="flex items-center gap-6 md:gap-8 text-sm font-semibold">
+            <button onClick={scrollToTop} className={navClass("dashboard")}>
               Dashboard
             </button>
 
-            {/* Clients → bottom */}
-            <button
-              onClick={scrollToBottom}
-              className="inline-flex items-center py-3 border-b-2 border-transparent hover:text-[#073246] transition"
-            >
+            <button onClick={scrollToBottom} className={navClass("clients")}>
               Clients
             </button>
 
-            {/* Campaigns → middle */}
-            <button
-              onClick={scrollToMiddle}
-              className="inline-flex items-center py-3 border-b-2 border-transparent hover:text-[#073246] transition"
-            >
+            <button onClick={scrollToMiddle} className={navClass("campaigns")}>
               Campaigns
             </button>
           </nav>
