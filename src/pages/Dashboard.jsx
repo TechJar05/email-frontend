@@ -1,6 +1,7 @@
 // src/pages/Dashboard.jsx
 import React, { useEffect, useState } from "react";
 import { clientsAPI, emailsAPI } from "../services/api";
+import { Mail } from "lucide-react";
 
 import TopBar from "../components/layout/TopBar";
 import StatsCards from "../components/StatsCards";
@@ -135,9 +136,12 @@ const Dashboard = () => {
           <UploadExcel onUpload={handleExcelUpload} />
 
           <div className="bg-[#f5f5f5] shadow-sm border border-[#073246] p-6">
-            <h3 className="text-[#073246] font-semibold text-lg mb-1">
-              📧 Send Emails
-            </h3>
+
+<h3 className="flex items-center gap-2 text-[#073246] font-semibold text-lg mb-1">
+  <Mail size={18} className="text-[#1d4457]" />
+  Send Emails
+</h3>
+
             <p className="text-slate-600 text-sm mb-5">
               Send emails only to clients who haven’t received one yet.
             </p>
@@ -145,12 +149,12 @@ const Dashboard = () => {
             <button
               onClick={handleSendEmails}
               disabled={sendingEmails || allSent}
-              className="w-full px-5 py-3 rounded-full bg-[#1d4457] text-white font-semibold hover:bg-[#163647] transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-5 py-3 cursor-pointer rounded-full bg-[#1d4457] text-white font-semibold hover:bg-[#163647] transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {sendingEmails
                 ? "Sending…"
                 : allSent
-                ? "All Emails Sent ✅"
+                ? "All Emails Sent"
                 : "Send All Emails"}
             </button>
           </div>

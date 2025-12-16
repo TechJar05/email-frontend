@@ -1,6 +1,7 @@
 // src/components/UploadExcel.jsx
 import React, { useId, useState } from "react";
 import { toast } from "react-toastify";
+import { Upload } from "lucide-react";
 
 const UploadExcel = ({ onUpload }) => {
   const inputId = useId();
@@ -33,7 +34,11 @@ const UploadExcel = ({ onUpload }) => {
     <div className="bg-[#f5f5f5] shadow-sm border border-[#073246] p-6">
       {/* Header */}
       <div className="mb-4">
-        <h3 className="text-[#073246] font-bold text-lg">Upload Excel</h3>
+        <h3 className="flex items-center gap-2 text-[#073246] font-bold text-lg">
+  <Upload size={18} className="text-[#1d4457]" />
+  Upload Excel
+</h3>
+
       </div>
 
       {/* File Picker */}
